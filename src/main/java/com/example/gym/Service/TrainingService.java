@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -58,12 +59,15 @@ private static final Logger logger = Logger.getLogger(TrainingService.class.getN
 	@Autowired
 	private TrainingTypeService trainingTypeService;
 	
-	private final RestTemplate restTemplate;
+	@Autowired
+    private JmsTemplate jmsTemplate;
+	
+	//private final RestTemplate restTemplate;
 
-    @Autowired
+    /**@Autowired
     public TrainingService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
-    }
+    }**/
 	
 	
 	
@@ -113,10 +117,14 @@ private static final Logger logger = Logger.getLogger(TrainingService.class.getN
         // Guardar el nuevo entrenamiento en la base de datos
         trainingRepository.save(training);
         
-     // Llamada al microservicio secundario
+    /** // Llamada al microservicio secundario
         String secondaryServiceUrl = "http://localhost:8085/trainer/workload";
         restTemplate.postForObject(secondaryServiceUrl, trainingDto, String.class);
-    
+    **/
+        
+        
+     // Enviar mensaje a la cola de ActiveMQ
+        jmsTemplate.convertAndSend("trainingQueue", trainingDto);
        
     }
 	
