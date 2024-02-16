@@ -123,8 +123,7 @@ private static final Logger logger = Logger.getLogger(TrainingService.class.getN
     **/
         
         
-     // Enviar mensaje a la cola de ActiveMQ
-        jmsTemplate.convertAndSend("trainingQueue", trainingDto);
+     
        
     }
 	
